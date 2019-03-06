@@ -6,7 +6,12 @@
     "type": "project",
     "require": {
         "php": ">=7.1.3",
+        "guzzlehttp/guzzle": "^6.3",
+        "illuminate/mail": "5.7.28",
+        "illuminate/session": "5.7.28",
         "laravel/lumen-framework": "5.7.*",
+        "orumad/lumen-config-cache": "^1.0",
+        "predis/predis": "^1.1",
         "vlucas/phpdotenv": "~2.2"
     },
     "require-dev": {
