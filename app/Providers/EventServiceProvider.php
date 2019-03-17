@@ -3,7 +3,7 @@
 namespace App\Providers;
 
 use Laravel\Lumen\Providers\EventServiceProvider as ServiceProvider;
-//use Illuminate\Broadcasting\Channel;
+use Illuminate\Broadcasting\Channel;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -13,7 +13,7 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
-        'App\Events\onAdd' => [
+        'App\Events\Event_to_chat' => [
             'App\Listeners\AddListener',
         ],
     ];

@@ -58,4 +58,32 @@ class User
     public function get_user_id($email){
         return $this->user->where('email', $email)->value('id');
     }
+    public function get_user_info($id){
+        return $this->user->select('username', 'lastname')->where('id', $id)->get();
+    }
+
+    public function update_username($user_id, $username){
+        $this->user->where('id',$user_id)->update(['username'=> $username]);
+    }
+
+    public function update_lastname($user_id, $lastname){
+        $this->user->where('id',$user_id)->update(['lastname'=> $lastname]);
+    }
+
+    public function get_all_info($user_id){
+        return $user_info = $this->user
+            ->join('profiles', 'users.id', '=', 'profiles.user_id')
+            ->select('username', 'lastname','gender','preferance','biography','interests','avatar')
+            ->where('users.id', $user_id)
+            ->get();
+    }
+
+    public function get_photo($gender){
+        return $user_info = $this->user
+            ->join('profiles', 'users.id', '=', 'profiles.user_id')
+            ->select('username','avatar', 'user_id')
+            ->where('gender', $gender)
+            ->get();
+    }
+
 }

@@ -21,14 +21,18 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 // }
 
 window.Vue = require("vue");
-// import Echo from 'laravel-echo';
-// window.io = require('socket.io-client');
+import Echo from 'laravel-echo';
+window.io = require('socket.io-client');
 // window.Pusher = require('pusher-js');
 // Vue.use(VueAxios, axios);
 import Autentifications from './components/AuthComponent';
 import Login from './components/LoginComponent';
 import Register  from './components/RegisterComponent';
 import Chat  from './components/ChatComponent';
+import Profile  from './components/ProfilComponent';
+import Main  from './components/MainComponent';
+import Menu  from './components/MenuComponent';
+import News  from './components/NewsComponent';
 
 // window.Echo = new Echo({
 //   broadcaster:'socket.io',
@@ -36,8 +40,12 @@ import Chat  from './components/ChatComponent';
 // });
 
 Vue.component('app', require('./components/App'));
+Vue.component('profile', Profile);
 Vue.component('prop-component', require('./components/Index'));
 Vue.component('json-component', require('./components/jsonComponent'));
+Vue.component('menul', Menu);
+Vue.component('news', News);
+Vue.component('main_page', Main);
 Vue.component('autentification', Autentifications);
 Vue.component('chat', Chat);
 Vue.component('login', Login);

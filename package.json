@@ -20,7 +20,12 @@
   "dependencies": {
     "axios": "^0.18.0",
     "bootstrap": "^4.3.1",
+    "ioredis": "^4.6.2",
     "jquery": "^3.3.1",
+    "laravel-echo": "^1.5.3",
+    "laravel-echo-server": "^1.5.0",
+    "socket.io": "^2.2.0",
+    "socket.io-client": "^2.2.0",
     "vue": "^2.6.8",
     "vue-axios": "^2.1.4",
     "vue-cli": "^2.9.6",

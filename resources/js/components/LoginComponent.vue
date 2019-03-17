@@ -55,10 +55,11 @@
                         data: personInfo,
                         url: '/login',
                     };
-                    // console.log(personInfo);
+                    console.log(personInfo);
+
                     axios(options)
                         .then((response) => {
-                            console.log(response);
+                            console.log(response.data);
                             if (response.data){
                                 this.msg = response.data;
                                 // this.delete();

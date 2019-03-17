@@ -1,6 +1,9 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use App\Events\Message;
+//namespace AppEvents;
 //namespace App\Mail;
 
 //use Illuminate\Mail\Mailable;
@@ -8,6 +11,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Model\User;
+use Illuminate\Support\Facades\Redis;
 
 class IndexController extends Controller
 {
@@ -92,6 +96,17 @@ class IndexController extends Controller
 //        $pas = hash('whirlpool', req)
 //        $this->user->add_new_user()
         //dd($result);
+    }
+
+    public function message(Request $request){
+//        return $request;
+        $redis = Redis::connection('default');
+        $data = [
+            'message'=>$request['message'],
+        ];
+        $redis->publish($request['channels'], json_encode($data));
+        return $request;
+//            event(new \App\Events\Event_to_chat($request['message']));
     }
     //
 }

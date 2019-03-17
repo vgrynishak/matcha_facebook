@@ -94,15 +94,23 @@ $app->routeMiddleware([
 $app->configure('session');
 $app->configure('mail');
 $app->configure('services');
+$app->configure('database');
+$app->configure('broadcasting');
+$app->configure('queue');
+$app->configure('cache');
 
 // $app->register(App\Providers\AppServiceProvider::class);
 // $app->register(App\Providers\AuthServiceProvider::class);
+$app->register(App\Providers\BroadcastServiceProvider::class);
+$app->register(\Illuminate\Broadcasting\BroadcastServiceProvider::class);
 $app->register(App\Providers\EventServiceProvider::class);
 $app->register(\Illuminate\Mail\MailServiceProvider::class);
 $app->register(\Illuminate\Session\SessionServiceProvider::class);
+$app->register(\Illuminate\Redis\RedisServiceProvider::class);
 $app->alias('mailer', Illuminate\Mail\Mailer::class);
 $app->alias('mailer', Illuminate\Contracts\Mail\Mailer::class);
 $app->alias('mailer', Illuminate\Contracts\Mail\MailQueue::class);
+$app->alias('Redis', \Illuminate\Support\Facades\Redis::class);
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes
