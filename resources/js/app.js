@@ -23,6 +23,7 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 window.Vue = require("vue");
 import Echo from 'laravel-echo';
 window.io = require('socket.io-client');
+window.socket = io('http://localhost:3000');
 // window.Pusher = require('pusher-js');
 // Vue.use(VueAxios, axios);
 import Autentifications from './components/AuthComponent';

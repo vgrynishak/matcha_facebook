@@ -22,6 +22,10 @@ class Chat
         return $this->chat->insertGetId([]);
     }
 
+    public static function add_lst_msg($msg, $chat_id){
+        return DB::table('chats')->where('chat_id', $chat_id)->update(['lst_msg'=> $msg]);
+    }
+
     public function check_chat($from, $to){
         return $this->chat
             ->where(function ($query) use($from, $to){

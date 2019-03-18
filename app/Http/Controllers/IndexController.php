@@ -98,15 +98,4 @@ class IndexController extends Controller
         //dd($result);
     }
 
-    public function message(Request $request){
-//        return $request;
-        $redis = Redis::connection('default');
-        $data = [
-            'message'=>$request['message'],
-        ];
-        $redis->publish($request['channels'], json_encode($data));
-        return $request;
-//            event(new \App\Events\Event_to_chat($request['message']));
-    }
-    //
 }

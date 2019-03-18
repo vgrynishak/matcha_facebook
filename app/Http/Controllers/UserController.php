@@ -8,6 +8,7 @@
 
 namespace App\Http\Controllers;
 use App\Events\Event;
+use App\Http\Model\Message;
 use App\Listeners\ExampleListener;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -141,5 +142,28 @@ class UserController extends Controller
     public function get_chats(Request $request){
         $chat = $this->room->get_all_chat($request->session()->get('id'));
         return $chat;
+    }
+
+    public function message(Request $request){
+//        return $request;
+        $chat_id  =  $request['chat'];
+        $user_id = $request->session()->get('id');
+        $message = $request['message'];
+        Message::add_msg($chat_id,$user_id,$message);
+        Chat::add_lst_msg($message,$chat_id);
+        $redis = Redis::connection('default');
+        $data = [
+            'message'=>$message,
+        ];
+        $redis->publish($request['channels'], json_encode($data));
+        return $request;
+//            event(new \App\Events\Event_to_chat($request['message']));
+    }
+    //
+    public function get_messages(Request $request){
+//        $chat = $this->room->get_all_chat($request->session()->get('id'));
+//        print_r($result);
+        return Message::get_msg($request['chat']);
+//        return json_encode($result);
     }
 }

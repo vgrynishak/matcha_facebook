@@ -1938,15 +1938,40 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "ChatComponent",
   data: function data() {
     return {
       is_select: false,
+      select_chat: [],
+      user_id: '',
       chats: [],
-      chat_id: '',
-      chat_user: '',
-      datas: '',
       messages: [],
       textMessage: ''
     };
@@ -1963,14 +1988,7 @@ __webpack_require__.r(__webpack_exports__);
         method: 'post',
         url: '/get_id'
       }).then(function (response) {
-        // console.log(response.data);
         _this.user_id = response.data;
-        console.log('chats.' + _this.chat_id + '.' + _this.user_id);
-        var socket = io('http://localhost:3000');
-        socket.on('chats.' + _this.chat_id + '.' + _this.user_id, function (data) {
-          console.log('lol' + data.message);
-          this.messages.push(data.message);
-        }.bind(_this));
       });
     },
     get_all_chat: function get_all_chat() {
@@ -1980,35 +1998,76 @@ __webpack_require__.r(__webpack_exports__);
         method: 'post',
         url: '/get_chats'
       }).then(function (response) {
+        // console.log('kkk');
+        // console.log(response.data);
         _this2.chats = response.data;
       });
     },
     open_chat: function open_chat(chat) {
-      this.get_axios();
-      this.messages = [];
-      this.is_select = true;
-      this.chat_id = chat['chat_id'];
-      this.chat_user = chat['user_id'];
-    },
-    sendMessage: function sendMessage() {
       var _this3 = this;
 
+      window.socket.removeListener('chats.' + this.select_chat['chat_id'] + '.' + this.select_chat['user_id']);
+      this.is_select = true;
+      this.select_chat = chat;
+      this.get_message();
+      window.socket.on('chats.' + this.select_chat['chat_id'] + '.' + this.select_chat['user_id'], function (data) {
+        var new_msg = {
+          message: data.message,
+          user_id: _this3.select_chat['user_id']
+        };
+
+        _this3.messages.push(new_msg);
+      });
+    },
+    get_message: function get_message() {
+      var _this4 = this;
+
+      axios({
+        method: 'post',
+        url: '/get_messages',
+        params: {
+          chat: this.select_chat['chat_id']
+        }
+      }).then(function (response) {
+        _this4.messages = response.data;
+        console.log(_this4.messages[0]);
+      });
+    },
+    sendMessage: function sendMessage() {
+      var _this5 = this;
+
       console.log("here" + this.textMessage);
-      this.messages.push(this.textMessage);
+      var new_msg = {
+        message: this.textMessage,
+        user_id: this.user_id
+      };
+      this.messages.push(new_msg);
+      console.log(this.messages);
       axios({
         method: 'post',
         url: '/message',
         params: {
           message: this.textMessage,
-          channels: 'chats.' + this.chat_id + '.' + this.chat_user,
-          chat: this.chat_id
+          channels: 'chats.' + this.select_chat['chat_id'] + '.' + this.user_id,
+          chat: this.select_chat['chat_id']
         }
       }).then(function (response) {
-        console.log(response.data);
-        _this3.textMessage = '';
+        // console.log(response.data);
+        _this5.textMessage = '';
       });
+    },
+    go_back: function go_back() {
+      // console.log('here_close');
+      // window.socket.removeListener('chats.'+this.chat_id+'.'+this.user_id);
+      this.is_select = false;
+      this.messages = [];
+    },
+    put_class: function put_class(id) {
+      console.log(this.user_id);
+      if (id == this.user_id) return "right";else return "left";
     }
-  }
+  },
+  computed: {}
 });
 
 /***/ }),
@@ -3428,7 +3487,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.photo[data-v-80d584ac] {\n    display: flex;\n    width: 100%;\n}\n.photo img[data-v-80d584ac] {\n    width: 5rem;\n}\n.container[data-v-80d584ac] {\n    margin: 3rem auto;\n}\n\n\n", ""]);
+exports.push([module.i, "\n.photo[data-v-80d584ac] {\n    display: flex;\n    width: 100%;\n    margin-bottom: 2rem;\n}\n.photo img[data-v-80d584ac] {\n    width: 5rem;\n}\n.container[data-v-80d584ac] {\n    margin: 3rem auto;\n}\n.chats img[data-v-80d584ac] {\n    width: 3rem;\n}\n.chat[data-v-80d584ac] {\n    display: flex;\n    margin-bottom: 1rem;\n}\n.msg[data-v-80d584ac] {\n    font-size: 0.7rem;\n    font-family: monospace;\n}\n.chat-msg[data-v-80d584ac] {\n    display: flex;\n    flex-direction: column;\n    margin-left: 1rem;\n    width: 100%;\n}\n.header[data-v-80d584ac] {\n    display: flex;\n    justify-content: space-between;\n}\n.date[data-v-80d584ac] {\n    font-family: monospace;\n}\n.line[data-v-80d584ac] {\n    margin-left: 4rem;\n}\n.msg-header[data-v-80d584ac] {\n    display: flex;\n    justify-content: space-between;\n}\n.msg-header img[data-v-80d584ac] {\n    width: 3rem;\n}\n.left[data-v-80d584ac] {\n    display: flex;\n    justify-content: flex-end;\n}\n.right[data-v-80d584ac] {\n    display: flex;\n    justify-content: flex-start;\n    background-color: greenyellow;\n}\n", ""]);
 
 // exports
 
@@ -15202,83 +15261,175 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "container" }, [
-    _c("div", { staticClass: "row" }, [
-      _c(
-        "div",
-        { staticClass: "photo" },
-        _vm._l(_vm.chats, function(chat) {
-          return _c("div", [
+    !_vm.is_select
+      ? _c("div", [
+          _c(
+            "div",
+            { staticClass: "photo" },
+            _vm._l(_vm.chats, function(chat) {
+              return !chat["lst_msg"]
+                ? _c("div", [
+                    _c(
+                      "a",
+                      {
+                        attrs: { "href.prevent": "" },
+                        on: {
+                          click: function($event) {
+                            return _vm.open_chat(chat)
+                          }
+                        }
+                      },
+                      [
+                        _c("img", {
+                          staticClass: "rounded-circle",
+                          attrs: { src: chat["avatar"], alt: "" }
+                        })
+                      ]
+                    )
+                  ])
+                : _vm._e()
+            }),
+            0
+          ),
+          _vm._v(" "),
+          _c(
+            "div",
+            { staticClass: "chats" },
+            _vm._l(_vm.chats, function(chat) {
+              return chat["lst_msg"]
+                ? _c("div", [
+                    _c("div", { staticClass: "chat" }, [
+                      _c("div", [
+                        _c("a", { attrs: { "href.prevent": "" } }, [
+                          _c("img", {
+                            staticClass: "rounded-circle",
+                            attrs: { src: chat["avatar"], alt: "" }
+                          })
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c(
+                        "div",
+                        {
+                          staticClass: "chat-msg",
+                          on: {
+                            click: function($event) {
+                              return _vm.open_chat(chat)
+                            }
+                          }
+                        },
+                        [
+                          _c("div", { staticClass: "header" }, [
+                            _c("div", { staticClass: "name" }, [
+                              _c("b", [_vm._v(_vm._s(chat["username"]))])
+                            ]),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "date" }, [
+                              _vm._v("15:10")
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "msg" }, [
+                            _vm._v(_vm._s(chat["lst_msg"]))
+                          ])
+                        ]
+                      )
+                    ]),
+                    _vm._v(" "),
+                    _vm._m(0, true)
+                  ])
+                : _vm._e()
+            }),
+            0
+          )
+        ])
+      : _vm._e(),
+    _vm._v(" "),
+    _vm.is_select
+      ? _c("div", { staticClass: "col-sm-12" }, [
+          _c("div", { staticClass: "msg-header" }, [
             _c(
               "a",
               {
-                attrs: { "href.prevent": "" },
+                attrs: { href: "javascript:void(0);" },
                 on: {
                   click: function($event) {
-                    return _vm.open_chat(chat)
+                    return _vm.go_back()
                   }
                 }
               },
-              [
-                _c("img", {
-                  staticClass: "rounded-circle",
-                  attrs: { src: chat["avatar"], alt: "" }
-                })
-              ]
-            )
-          ])
-        }),
-        0
-      ),
-      _vm._v(" "),
-      _vm.is_select
-        ? _c("div", { staticClass: "col-sm-12" }, [
-            _c(
-              "textarea",
-              {
-                staticClass: "form-control",
-                attrs: { readonly: "", rows: "10" }
-              },
-              [_vm._v(_vm._s(_vm.messages.join("\n")))]
+              [_vm._v("Чати")]
             ),
             _vm._v(" "),
-            _c("hr"),
-            _vm._v(" "),
-            _c("input", {
-              directives: [
-                {
-                  name: "model",
-                  rawName: "v-model",
-                  value: _vm.textMessage,
-                  expression: "textMessage"
-                }
-              ],
-              staticClass: "form-control",
-              attrs: { type: "text" },
-              domProps: { value: _vm.textMessage },
-              on: {
-                keyup: function($event) {
-                  if (
-                    !$event.type.indexOf("key") &&
-                    _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
-                  ) {
-                    return null
-                  }
-                  return _vm.sendMessage($event)
-                },
-                input: function($event) {
-                  if ($event.target.composing) {
-                    return
-                  }
-                  _vm.textMessage = $event.target.value
-                }
+            _c("div", [
+              _vm._v(
+                "\n               " +
+                  _vm._s(_vm.select_chat["username"]) +
+                  "\n               "
+              ),
+              _c("img", {
+                staticClass: "rounded-circle",
+                attrs: { src: _vm.select_chat["avatar"], alt: "" }
+              })
+            ])
+          ]),
+          _vm._v(" "),
+          _c(
+            "div",
+            _vm._l(_vm.messages, function(message) {
+              return _c("div", [
+                _c("div", { class: _vm.put_class(message["user_id"]) }, [
+                  _vm._v(_vm._s(message["message"]))
+                ])
+              ])
+            }),
+            0
+          ),
+          _vm._v(" "),
+          _c("hr"),
+          _vm._v(" "),
+          _c("input", {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.textMessage,
+                expression: "textMessage"
               }
-            })
-          ])
-        : _vm._e()
-    ])
+            ],
+            staticClass: "form-control",
+            attrs: { type: "text" },
+            domProps: { value: _vm.textMessage },
+            on: {
+              keyup: function($event) {
+                if (
+                  !$event.type.indexOf("key") &&
+                  _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
+                ) {
+                  return null
+                }
+                return _vm.sendMessage($event)
+              },
+              input: function($event) {
+                if ($event.target.composing) {
+                  return
+                }
+                _vm.textMessage = $event.target.value
+              }
+            }
+          })
+        ])
+      : _vm._e()
   ])
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "line" }, [_c("hr")])
+  }
+]
 render._withStripped = true
 
 
@@ -28526,7 +28677,8 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
 window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js");
 
-window.io = __webpack_require__(/*! socket.io-client */ "./node_modules/socket.io-client/lib/index.js"); // window.Pusher = require('pusher-js');
+window.io = __webpack_require__(/*! socket.io-client */ "./node_modules/socket.io-client/lib/index.js");
+window.socket = io('http://localhost:3000'); // window.Pusher = require('pusher-js');
 // Vue.use(VueAxios, axios);
 
 
